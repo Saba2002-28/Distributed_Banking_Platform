@@ -1,0 +1,16 @@
+
+{
+  "version": 1,
+  "shards": {
+    "A": {
+      "account_range": ["A0001", "A1000"],
+      "database_service": "db-a",
+      "replicas": ["bank-a1", "bank-a2"]
+    },
+    "B": {
+      "account_range": ["A1001", "A2000"],
+      "database_service": "db-b",
+      "replicas": ["bank-b1", "bank-b2"]
+    }
+  }
+}
