@@ -1,4 +1,4 @@
-Distributed Banking Platform
+# Distributed Banking Platform
 
 A distributed banking system developed as part of Distributed Systems – Assignment 2. The project demonstrates data sharding, application replication, shard-aware request routing, load balancing, concurrent transaction handling, and distributed transactions using the Two-Phase Commit (2PC) protocol.
 
