@@ -454,7 +454,3 @@ Note: This is a simplified overview. Additional application, database, and test 
 
 ---
 
-
-Project: Distributed Banking Platform
-
-Repository: GitHub Repository
