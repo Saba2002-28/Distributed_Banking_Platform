@@ -1,0 +1,16 @@
+1) run the test
+2) while the test is running, in another terminal stop the replica 1 or two for the shard A with the command: 
+docker compose stop bank-a1
+
+or
+
+docker compose stop bank-a2
+
+*** only stop one of the replications ***
+
+3) After the test is finished, start the stopped replica with:
+docker compose start bank-a1
+
+or
+
+docker compose start bank-a2
