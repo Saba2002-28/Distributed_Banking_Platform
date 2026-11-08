@@ -4,35 +4,20 @@ A distributed banking system developed as part of Distributed Systems – Assign
 
 The system is deployed using Docker Compose and consists of two independent banking shards, each with its own PostgreSQL database and two application replicas.
 
-## Table of Contents
-
-Overview
-Architecture
-Technologies
-Features
-Sharding Strategy
-Load Balancing
-Distributed Transactions
-Concurrency Control
-Project Deployment
-Testing and Experiments
-Recovery Scenarios
-Project Structure
-
-Overview
+## Overview
 
 The main objective of this project is to implement a distributed banking platform that supports multiple application replicas and independent database shards while maintaining transaction consistency.
 
 The system provides the following banking operations:
 
-Check account balance
-Deposit money
-Withdraw money
-Transfer money between accounts
+- Check account balance
+- Deposit money
+- Withdraw money
+- Transfer money between accounts
 
 Clients communicate exclusively with the Gateway and do not need to know which shard or application replica handles their requests.
 
-Architecture
+## Architecture
 
 The platform consists of the following components:
 
