@@ -143,7 +143,7 @@ For example, requests involving accounts in Shard A are distributed as follows:
 
 ```text
 
-** Request 1  -> Bank A1
+Request 1  -> Bank A1
 Request 2  -> Bank A2
 Request 3  -> Bank A1
 Request 4  -> Bank A2
@@ -154,38 +154,38 @@ Request 6  -> Bank A2
 
 Load balancing is performed independently within each shard.
 
-Distributed Transactions
+## Distributed Transactions
 
 The system uses the Two-Phase Commit (2PC) protocol for transfers involving accounts in different shards.
 
 Phase 1: Prepare
 
-The Coordinator generates a unique transaction ID.
-It sends PREPARE requests to both participating shards.
-Each participant validates the transaction and prepares its changes.
-Each participant returns a YES or NO vote.
+- The Coordinator generates a unique transaction ID.
+- It sends PREPARE requests to both participating shards.
+- Each participant validates the transaction and prepares its changes.
+- Each participant returns a YES or NO vote.
 
 Phase 2: Commit or Abort
 
-If both participants vote YES, the Coordinator durably records a COMMIT decision and sends COMMIT requests.
-If any participant votes NO, the Coordinator records an ABORT decision and sends ABORT requests.
+- If both participants vote YES, the Coordinator durably records a COMMIT decision and sends COMMIT requests.
+- If any participant votes NO, the Coordinator records an ABORT decision and sends ABORT requests.
 
 The transaction is reported as COMPLETED after the participants confirm the final decision.
 
-Transaction States
+## Transaction States
 
 The Coordinator maintains persistent transaction states, including:
 
-INITIATED
-PREPARING
-PREPARED
-COMMIT_DECIDED
-ABORT_DECIDED
-COMPLETED
+- INITIATED
+- PREPARING
+- PREPARED
+- COMMIT_DECIDED
+- ABORT_DECIDED
+- COMPLETED
 
 These states support transaction tracking and recovery after Coordinator failures.
 
-Concurrency Control
+## Concurrency Control
 
 The platform supports concurrent banking operations through multiple application replicas.
 
@@ -193,23 +193,17 @@ Concurrency tests were performed to verify that simultaneous deposits, withdrawa
 
 The application replicas share their shard's database, ensuring that account balances are maintained in a common persistent data store rather than independently by each replica.
 
-Project Deployment
+## Project Deployment
 
 Prerequisites
 
 Make sure the following software is installed:
 
-Docker Desktop
-Docker Compose
-Python (for running the client and test scripts)
+- Docker Desktop
+- Docker Compose
+- Python (for running the client and test scripts)
 
 1. Clone the repository
-
-```bash
-
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-
-```
 
 Navigate to the project directory:
 
@@ -294,7 +288,7 @@ docker compose down -v
 
 Warning: The second command deletes the persistent database volumes and their stored data.
 
-Testing and Experiments
+## Testing and Experiments
 
 The implementation was evaluated through seven experiments designed to verify the main distributed-system requirements.
 
@@ -308,35 +302,31 @@ The implementation was evaluated through seven experiments designed to verify th
 | 6. Interrupted Distributed Transaction | Interrupted the Coordinator after a durable COMMIT decision and verified recovery after restart. | Passed |
 | 7. Concurrent Cross-shard Transactions | Executed eight concurrent cross-shard transfers involving overlapping accounts. | Passed |
 
-Selected Test Results
+## Selected Test Results
 
-Concurrent deposits and withdrawals
+## Concurrent deposits and withdrawals
 
-20 successful deposits
-20 successful withdrawals
-40 total requests
-10 concurrent workers
-0 failed requests
-Initial balance: 469.00
-Final balance: 469.00
+- 20 successful deposits
+- 20 successful withdrawals
+- 40 total requests
+- 10 concurrent workers
+- 0 failed requests
 
-Replica failover
+## Replica failover
 
-220 balance inquiries
-One replica stopped during the test
-Remaining healthy replica continued processing requests
-All requests returned HTTP 200
-No reported failures
+- Repeated balance inquiries
+- One replica stopped during the test
+- Remaining healthy replica continued processing requests
+- All requests returned HTTP 200
 
-Concurrent cross-shard transfers
+## Concurrent cross-shard transfers
 
-8 concurrent transactions
-All 8 transactions completed successfully
-Both participants voted YES for every transaction
-No prepared transactions remained
-Combined account balance remained 4600.00
+- 8 concurrent transactions
+- All 8 transactions completed successfully
+- Both participants voted YES for every transaction
+- No prepared transactions remained
 
-Recovery Scenarios
+## Recovery Scenarios
 
 In addition to the seven main experiments, three recovery scenarios were tested to evaluate the behavior of the Transaction Coordinator.
 
@@ -406,8 +396,11 @@ distributed-banking-platform/
 │   └── requirements.txt
 │
 ├── tests/
-│   ├── concurrency_test_wd.py
-│   ├── replica_failover_test.py
+│   ├── experiment3/
+│   │   └── concurrency_test_wd.py
+│   │
+│   ├── experiment4/
+│   │   └── replica_failover_test.py
 │   │
 │   ├── Duarable_test_scenarioB/
 │   │   ├── Durable_state_B.py
@@ -416,11 +409,11 @@ distributed-banking-platform/
 │   ├── experiment6/
 │   │   ├── coordinator_test.py
 │   │   └── experiment 6 guid and logs/
-│   │       ├── coordinator-app.py
+│   │       └── coordinator-app.py
 │   │
 │   └── experiment7/
 │       ├── experiment 7 guide.txt
-│       ├── experiment7_concurrent.py
+│       └── experiment7_concurrent.py
 │
 ├── .env
 ├── .gitignore
