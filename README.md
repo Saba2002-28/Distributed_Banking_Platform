@@ -460,6 +460,10 @@ To use the Docker Hub images:
 
 **Note:** PostgreSQL uses the official `postgres:17` image, which Docker Compose pulls automatically if it is not already available locally.
 
+Links to Docker Hub repositories:
+- https://hub.docker.com/repository/docker/sabash81/distributed-banking-gateway/general
+- https://hub.docker.com/repository/docker/sabash81/distributed-banking-coordinator/general
+- https://hub.docker.com/repository/docker/sabash81/distributed-banking-shard/general
 
 Note: This is a simplified overview. Additional application, database, and test files are included in the repository.
 
