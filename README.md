@@ -4,7 +4,7 @@ A distributed banking system developed as part of Distributed Systems – Assign
 
 The system is deployed using Docker Compose and consists of two independent banking shards, each with its own PostgreSQL database and two application replicas.
 
-##Table of Contents
+## Table of Contents
 
 Overview
 Architecture
