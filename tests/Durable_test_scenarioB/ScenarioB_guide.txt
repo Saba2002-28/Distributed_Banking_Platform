@@ -1,12 +1,17 @@
-before changing the file:
-1)change the docker-compose.yaml: EXPERIMENT_B_PAUSE_AFTER_PREPARE: "1"
-2)change the coordinator/app.py code
-3)docker compose up -d --build coordinator
-4)docker compose ps
+### Instructions 
 
-After changing:
 
+before the test change the following files:
+1)In docker-compose.yaml in Transaction Coordinator section in environment under DATABASE_URL with the same indentation add: EXPERIMENT_B_PAUSE_AFTER_PREPARE: "1"
+2)change the coordinator/app.py code with the ScenarioB_coordinator.py content entirely
+3) save the changes done to both files
+4)docker compose up -d --build coordinator
+5)docker compose ps
+
+After changing the files run these commands:
 1)python tests\Duarable_test_scenarioB\Durable_state_B.py
+
+After the test stopped run:
 2)curl http://localhost:5005/transactions/Transaction ID
 3)docker compose stop coordinator
 4)docker compose start coordinator
