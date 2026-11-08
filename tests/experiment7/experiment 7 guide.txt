@@ -1,0 +1,15 @@
+experiment 7 guide:
+1)python tests\experiment7\experiment7_concurrent.py
+2)check the balances
+3)docker compose exec coordinator-db psql -U bankuser -d coordinator -c "SELECT transaction_id, status, from_account_id, to_account_id, amount FROM distributed_transactions ORDER BY created_at DESC LIMIT 10;"
+
+4)docker compose exec coordinator-db psql -U bankuser -d coordinator -c "SELECT transaction_id, shard_id, status FROM transaction_participants ORDER BY updated_at DESC LIMIT 20;"
+
+5)docker compose exec db-a psql -U bankuser -d shard_a -c "SELECT transaction_id, decision FROM participant_decisions ORDER BY decided_at DESC LIMIT 10;"
+
+6)docker compose exec db-b psql -U bankuser -d shard_b -c "SELECT transaction_id, decision FROM participant_decisions ORDER BY decided_at DESC LIMIT 10;"
+
+7)docker compose exec db-a psql -U bankuser -d shard_a -c "SELECT gid, prepared FROM pg_prepared_xacts;"
+8)docker compose exec db-b psql -U bankuser -d shard_b -c "SELECT gid, prepared FROM pg_prepared_xacts;"
+9)
+10)
