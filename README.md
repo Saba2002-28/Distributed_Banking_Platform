@@ -400,16 +400,18 @@ distributed-banking-platform/
 │   │   └── concurrency_test_wd.py
 │   │
 │   ├── experiment4/
+|   |   ├── guide.txt
 │   │   └── replica_failover_test.py
 │   │
 │   ├── Durable_test_scenarioB/
 │   │   ├── Durable_state_B.py
+│   │   ├── ScenarioB-guide.txt
 │   │   └── ScenarioB_coordinator.py
 │   │
 │   ├── experiment6/
 │   │   ├── coordinator_test.py
-│   │   └── experiment 6 guid and logs/
-│   │       └── coordinator-app.py
+│   │   ├── guide.txt
+│   │   └── coordinator-app.py
 │   │
 │   └── experiment7/
 │       ├── experiment 7 guide.txt
