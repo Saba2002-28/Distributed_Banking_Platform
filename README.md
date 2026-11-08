@@ -32,7 +32,7 @@ The platform consists of the following components:
 | Database B | Persistent PostgreSQL database for Shard B. |
 | Coordinator Database | Stores transaction states and durable coordination decisions. |
 
-System architecture
+### System architecture
 
 ```text
                          Banking Client
@@ -63,16 +63,16 @@ System architecture
 
 Each shard has two application replicas that share the same shard database. The replicas do not maintain independent authoritative account balances.
 
-Technologies
+## Technologies
 
-Python – Application and transaction logic
-Docker – Containerization
-Docker Compose – Multi-container deployment and orchestration
-PostgreSQL – Persistent storage for banking accounts and transaction coordination
-HTTP/REST APIs – Communication between system components
-Two-Phase Commit (2PC) – Distributed transaction coordination
+- Python – Application and transaction logic
+- Docker – Containerization
+- Docker Compose – Multi-container deployment and orchestration
+- PostgreSQL – Persistent storage for banking accounts and transaction coordination
+- HTTP/REST APIs – Communication between system components
+- Two-Phase Commit (2PC) – Distributed transaction coordination
 
-Features
+## Features
 
 1. Data Sharding
 
