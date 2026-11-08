@@ -84,8 +84,8 @@ Each account belongs to exactly one authoritative shard.
 
 Each shard has two application replicas:
 
-Shard A: Bank A1 and Bank A2
-Shard B: Bank B1 and Bank B2
+- Shard A: Bank A1 and Bank A2
+- Shard B: Bank B1 and Bank B2
 
 Replicas within the same shard share a PostgreSQL database.
 
@@ -93,8 +93,8 @@ Replicas within the same shard share a PostgreSQL database.
 
 The Gateway performs two routing steps:
 
-Determines the shard responsible for the requested account.
-Selects a healthy application replica within that shard.
+- Determines the shard responsible for the requested account.
+- Selects a healthy application replica within that shard.
 
 This ensures that requests are routed to the correct shard before load balancing takes place.
 
@@ -120,7 +120,7 @@ Transfers between accounts belonging to different shards are coordinated using t
 
 The Transaction Coordinator stores transaction states and decisions persistently. After a restart, it recovers unresolved transactions according to their durable decisions.
 
-Sharding Strategy
+## Sharding Strategy
 
 The system uses deterministic range-based sharding.
 
@@ -135,7 +135,7 @@ The shard mapping is defined in:
 
 The Gateway uses this configuration to determine the authoritative shard for each account.
 
-Load Balancing
+## Load Balancing
 
 After identifying the correct shard, the Gateway selects an available replica using Round Robin.
 
@@ -143,16 +143,11 @@ For example, requests involving accounts in Shard A are distributed as follows:
 
 ```text
 
-Request 1  -> Bank A1
-
+** Request 1  -> Bank A1
 Request 2  -> Bank A2
-
 Request 3  -> Bank A1
-
 Request 4  -> Bank A2
-
 Request 5  -> Bank A1
-
 Request 6  -> Bank A2
 
 ```
