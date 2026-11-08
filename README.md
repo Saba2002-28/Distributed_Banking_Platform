@@ -402,7 +402,7 @@ distributed-banking-platform/
 │   ├── experiment4/
 │   │   └── replica_failover_test.py
 │   │
-│   ├── Duarable_test_scenarioB/
+│   ├── Durable_test_scenarioB/
 │   │   ├── Durable_state_B.py
 │   │   └── ScenarioB_coordinator.py
 │   │
@@ -415,13 +415,51 @@ distributed-banking-platform/
 │       ├── experiment 7 guide.txt
 │       └── experiment7_concurrent.py
 │
-├── .env
 ├── .gitignore
 ├── client.py
 ├── docker-compose.yml
 └── README.md
 
 ```
+
+## Docker Hub Images
+
+The project provides three custom Docker images published on Docker Hub:
+
+| Component | Docker Hub Repository | Image |
+|:---|:---|:---|
+| Banking Shard | [distributed-banking-shard](https://hub.docker.com/r/sabash81/distributed-banking-shard) | `sabash81/distributed-banking-shard:latest` |
+| Transaction Coordinator | [distributed-banking-coordinator](https://hub.docker.com/r/sabash81/distributed-banking-coordinator) | `sabash81/distributed-banking-coordinator:latest` |
+| Gateway | [distributed-banking-gateway](https://hub.docker.com/r/sabash81/distributed-banking-gateway) | `sabash81/distributed-banking-gateway:latest` |
+
+### Deployment Using Docker Hub Images
+
+By default, the provided `docker-compose.yml` builds the application images from the source code using the corresponding Dockerfiles.
+
+Alternatively, the pre-built images published on Docker Hub can be used to deploy the application without building the images locally.
+
+To use the Docker Hub images, follow the alternative deployment instructions below. The default Compose configuration remains unchanged and builds the images from source.
+
+To use the Docker Hub images:
+
+1. Replace the `build` configurations of the Gateway and Transaction Coordinator services with their corresponding Docker Hub `image` references.
+2. Replace the image references of all four banking replicas with `sabash81/distributed-banking-shard:latest`.
+3. Remove the corresponding `build` configurations from these services.
+4. Configure the required environment variables in the `.env` file.
+5. Pull the images from Docker Hub:
+
+   ```bash
+   docker compose pull
+   ```
+
+6. Start the application:
+
+   ```bash
+   docker compose up -d
+   ```
+
+**Note:** PostgreSQL uses the official `postgres:17` image, which Docker Compose pulls automatically if it is not already available locally.
+
 
 Note: This is a simplified overview. Additional application, database, and test files are included in the repository.
 
