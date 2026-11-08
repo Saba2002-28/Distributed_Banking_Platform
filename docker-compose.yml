@@ -1,0 +1,210 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      COORDINATOR_URL: http://coordinator:5000
+    depends_on:
+      db-a:
+        condition: service_healthy
+      db-b:
+        condition: service_healthy
+      coordinator:
+        condition: service_started
+    networks:
+      - banking-network
+
+  # -------------------------
+  # Shard A - Database
+  # -------------------------
+  db-a:
+    image: postgres:17
+    command: ["postgres", "-c", "max_prepared_transactions=100"]
+    environment:
+      POSTGRES_DB: shard_a
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - shard_a_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d shard_a"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - banking-network
+
+  # -------------------------
+  # Shard B - Database
+  # -------------------------
+  db-b:
+    image: postgres:17
+    command: ["postgres", "-c", "max_prepared_transactions=100"]
+    environment:
+      POSTGRES_DB: shard_b
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - shard_b_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d shard_b"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - banking-network
+
+  # -------------------------
+  # Transaction Coordinator Database
+  # -------------------------
+  coordinator-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: coordinator
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - coordinator_data:/var/lib/postgresql/data
+      - ./coordinator/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bankuser -d coordinator"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - banking-network
+
+  # -------------------------
+  # Transaction Coordinator
+  # -------------------------
+  coordinator:
+    build:
+      context: .
+      dockerfile: coordinator/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://bankuser:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@coordinator-db:5432/coordinator
+    ports:
+      - "5005:5000"
+    depends_on:
+      coordinator-db:
+        condition: service_healthy
+    networks:
+      - banking-network
+
+  # -------------------------
+  # Shard A - Application replicas
+  # -------------------------
+  bank-a1:
+    image: distributed-banking-platform/banking-shard:latest
+    build:
+      context: ./banking-shard
+      dockerfile: Dockerfile
+    environment:
+      REPLICA_ID: A1
+      DB_HOST: db-a
+      DB_PORT: 5432
+      DB_NAME: shard_a
+      DB_USER: bankuser
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5001:5000"
+    depends_on:
+      db-a:
+        condition: service_healthy
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  bank-a2:
+    image: distributed-banking-platform/banking-shard:latest
+    build:
+      context: ./banking-shard
+      dockerfile: Dockerfile
+    environment:
+      REPLICA_ID: A2
+      DB_HOST: db-a
+      DB_PORT: 5432
+      DB_NAME: shard_a
+      DB_USER: bankuser
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5002:5000"
+    depends_on:
+      db-a:
+        condition: service_healthy
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # -------------------------
+  # Shard B - Application replicas
+  # -------------------------
+  bank-b1:
+    image: distributed-banking-platform/banking-shard:latest
+    build:
+      context: ./banking-shard
+      dockerfile: Dockerfile
+    environment:
+      REPLICA_ID: B1
+      DB_HOST: db-b
+      DB_PORT: 5432
+      DB_NAME: shard_b
+      DB_USER: bankuser
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5003:5000"
+    depends_on:
+      db-b:
+        condition: service_healthy
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  bank-b2:
+    image: distributed-banking-platform/banking-shard:latest
+    build:
+      context: ./banking-shard
+      dockerfile: Dockerfile
+    environment:
+      REPLICA_ID: B2
+      DB_HOST: db-b
+      DB_PORT: 5432
+      DB_NAME: shard_b
+      DB_USER: bankuser
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "5004:5000"
+    depends_on:
+      db-b:
+        condition: service_healthy
+    networks:
+      - banking-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+networks:
+  banking-network:
+    driver: bridge
+
+volumes:
+  shard_a_data:
+  shard_b_data:
+  coordinator_data:
